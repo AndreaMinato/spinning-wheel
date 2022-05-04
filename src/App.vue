@@ -155,10 +155,10 @@ const wheelSlices = computed(() => {
     <header></header>
 
     <main class="mx-auto max-w-xl w-full">
-      <div class="relative border w-full aspect-square -rotate-90">
+      <div class="relative w-full aspect-square -rotate-90">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="rotate-90 absolute bottom-0 top-0 my-auto aspect-square w-[6%] z-50 text-gray-700 right-[0.5%]"
+          class="rotate-90 absolute bottom-0 top-0 my-auto aspect-square w-[6%] z-50 text-cyan-600 right-[0.5%]"
           viewBox="0 0 24 24"
         >
           <g fill="currentColor">
