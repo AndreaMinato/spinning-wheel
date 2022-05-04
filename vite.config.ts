@@ -10,6 +10,7 @@ export default defineConfig({
     vue(),
     VitePWA({
       includeAssets: ["favicon.ico", "robots.txt", "apple-touch-icon.png"],
+      registerType: "autoUpdate",
       manifest: {
         name: "Addio al nubilato di Giulia",
         short_name: "Nubilato Giulia",
