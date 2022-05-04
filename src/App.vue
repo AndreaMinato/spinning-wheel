@@ -21,6 +21,7 @@ const options = useLocalStorage("options", [...baseOptions]);
 const spinner = ref<HTMLElement | null>(null);
 const spinning = ref(false);
 const spinningAngle = ref(0);
+const currentlyOn = ref("");
 
 function generateLightColorHex() {
   let color = "#";
@@ -56,6 +57,10 @@ function getSectorPath(
   return `M${x} ${y} ${cx1} ${cy1} A${cr} ${cr} 0 0 1 ${cx2} ${cy2}Z`;
 }
 
+const baseSpin = computed(() => {
+  return spinningAngle.value % 360;
+});
+
 function spinWheel() {
   if (spinning.value) return;
 
@@ -67,15 +72,21 @@ function spinWheel() {
     spinningAngle.value + AT_MAX_TEN_TURNS
   );
 
+  const selected = wheelSlices.value.find((slice) => {
+    return slice.start <= baseSpin.value && slice.end >= baseSpin.value;
+  });
+
   spinning.value = true;
 
   setTimeout(() => {
+    currentlyOn.value = selected?.title || "";
     spinning.value = false;
   }, 5000);
 }
 
 function rimuovi() {
-  options.value.shift();
+  options.value = options.value.filter((option) => option != currentlyOn.value);
+  currentlyOn.value = "";
 }
 function reset() {
   options.value = [...baseOptions];
@@ -86,8 +97,7 @@ const outerDiameter = 100;
 const wheelSlices = computed(() => {
   const sliceNumber = options.value.length;
   const sliceAngle = 360 / sliceNumber;
-  const offset = sliceAngle / 2;
-  console.log(offset, sliceAngle);
+  const offset = 0; //sliceAngle / 2;
 
   return options.value.map((option, index) => {
     return {
@@ -101,14 +111,14 @@ const wheelSlices = computed(() => {
 </script>
 
 <template>
-  <div class="p-4 h-screen overflow-auto">
+  <div class="p-4 h-screen overflow-auto bg-cyan-100">
     <header></header>
 
     <main class="mx-auto max-w-xl w-full">
-      <div class="relative border w-full aspect-square bg-cyan-200">
+      <div class="relative border w-full aspect-square -rotate-90">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="absolute left-0 right-0 mx-auto aspect-square w-[6%] z-50 text-gray-700 top-[0.5%]"
+          class="rotate-90 absolute bottom-0 top-0 my-auto aspect-square w-[6%] z-50 text-gray-700 right-[0.5%]"
           viewBox="0 0 24 24"
         >
           <g fill="currentColor">
@@ -186,13 +196,14 @@ const wheelSlices = computed(() => {
           Tenta la fortuna
         </button>
         <button
+          v-show="currentlyOn"
           class="w-full bg-white border py-2 rounded-lg text-cyan-600 font-semibold tracking-wide"
           @click="rimuovi"
         >
-          Rimuovi {{ options[0] }}
+          Rimuovi {{ currentlyOn }}
         </button>
         <button
-          class="w-full bg-white border py-2 rounded-lg text-cyan-600 font-semibold tracking-wide"
+          class="w-full bg-cyan-50 border py-2 rounded-lg text-cyan-600 font-semibold tracking-wide"
           @click="reset"
         >
           Reset
