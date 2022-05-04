@@ -42,28 +42,12 @@ function getSectorPath(
   y: number,
   outerDiameter: number,
   a1: number,
-  a2: number
+  a2: number,
+  radiusFactor = 5
 ) {
   const degtorad = Math.PI / 180;
   const halfOuterDiameter = outerDiameter / 2;
-  const cr = halfOuterDiameter - 5;
-  const cx1 = Math.cos(degtorad * a2) * cr + x;
-  const cy1 = -Math.sin(degtorad * a2) * cr + y;
-  const cx2 = Math.cos(degtorad * a1) * cr + x;
-  const cy2 = -Math.sin(degtorad * a1) * cr + y;
-
-  return `M${x} ${y} ${cx1} ${cy1} A${cr} ${cr} 0 0 1 ${cx2} ${cy2}Z`;
-}
-function getReducedSectorPath(
-  x: number,
-  y: number,
-  outerDiameter: number,
-  a1: number,
-  a2: number
-) {
-  const degtorad = Math.PI / 180;
-  const halfOuterDiameter = outerDiameter / 2;
-  const cr = halfOuterDiameter - 10;
+  const cr = halfOuterDiameter - radiusFactor;
   const cx1 = Math.cos(degtorad * a2) * cr + x;
   const cy1 = -Math.sin(degtorad * a2) * cr + y;
   const cx2 = Math.cos(degtorad * a1) * cr + x;
@@ -84,11 +68,9 @@ function spinWheel() {
   );
 
   spinning.value = true;
-  //   spinner.value?.classList.add("spin-me");
 
   setTimeout(() => {
     spinning.value = false;
-    // spinner.value?.classList.remove("spin-me");
   }, 5000);
 }
 
@@ -150,12 +132,13 @@ const wheelSlices = computed(() => {
                 v-for="slice in wheelSlices"
                 :key="slice.title"
                 :d="
-                  getReducedSectorPath(
+                  getSectorPath(
                     outerDiameter / 2,
                     outerDiameter / 2,
                     outerDiameter,
                     slice.start,
-                    slice.end
+                    slice.end,
+                    9
                   )
                 "
                 :id="slice.title"
@@ -177,7 +160,7 @@ const wheelSlices = computed(() => {
             />
 
             <text
-              font-size="3px"
+              font-size="2px"
               v-for="slice in wheelSlices"
               :key="slice.title"
             >
