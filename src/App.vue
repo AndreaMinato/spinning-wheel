@@ -4,6 +4,17 @@ import { ref } from "vue";
 import { computed } from "@vue/reactivity";
 import { useLocalStorage } from "@vueuse/core";
 
+const isOpen = ref(true);
+const dialog = ref<HTMLDialogElement | null>(null);
+
+function setIsOpen(value: boolean) {
+  if (value) {
+    dialog.value?.showModal();
+  } else {
+    dialog.value?.close();
+  }
+}
+
 const baseOptions = [
   "flessioni",
   "biscotti",
@@ -79,6 +90,7 @@ function spinWheel() {
   spinning.value = true;
 
   setTimeout(() => {
+    setIsOpen(true);
     currentlyOn.value = selected?.title || "";
     spinning.value = false;
   }, 5000);
@@ -87,6 +99,7 @@ function spinWheel() {
 function rimuovi() {
   options.value = options.value.filter((option) => option != currentlyOn.value);
   currentlyOn.value = "";
+  setIsOpen(false);
 }
 function reset() {
   options.value = [...baseOptions];
@@ -195,13 +208,7 @@ const wheelSlices = computed(() => {
         >
           Tenta la fortuna
         </button>
-        <button
-          v-show="currentlyOn"
-          class="w-full bg-white border py-2 rounded-lg text-cyan-600 font-semibold tracking-wide"
-          @click="rimuovi"
-        >
-          Rimuovi {{ currentlyOn }}
-        </button>
+
         <button
           class="w-full bg-cyan-50 border py-2 rounded-lg text-cyan-600 font-semibold tracking-wide"
           @click="reset"
@@ -210,6 +217,36 @@ const wheelSlices = computed(() => {
         </button>
       </div>
     </footer>
+
+    <dialog ref="dialog" class="relative z-50">
+      <div class="fixed inset-0 flex items-center justify-center p-4">
+        <div
+          class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl my-8 max-w-sm w-full p-6"
+        >
+          <h3 class="text-lg leading-6 font-medium text-gray-900">
+            {{ currentlyOn }}
+          </h3>
+          <p class="text-sm text-gray-500">Qui la cosa va male.</p>
+
+          <div class="mt-5 sm:mt-6 flex flex-col gap-3">
+            <button
+              @click="rimuovi"
+              type="button"
+              class="w-full bg-cyan-50 border py-2 rounded-lg text-cyan-600 font-semibold tracking-wide"
+            >
+              Rimuovi dalle opzioni
+            </button>
+            <button
+              @click="setIsOpen(false)"
+              type="button"
+              class="w-full bg-cyan-50 border py-2 rounded-lg text-cyan-600 font-semibold tracking-wide"
+            >
+              Ok
+            </button>
+          </div>
+        </div>
+      </div>
+    </dialog>
   </div>
 </template>
 
