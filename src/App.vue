@@ -4,8 +4,8 @@ import { ref } from "vue";
 import { computed } from "@vue/reactivity";
 import { useLocalStorage } from "@vueuse/core";
 
-const isOpen = ref(true);
-const dialog = ref<HTMLDialogElement | null>(null);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const dialog = ref<any>(null);
 
 function setIsOpen(value: boolean) {
   if (value) {
