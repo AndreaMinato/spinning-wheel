@@ -17,7 +17,7 @@ const baseOptions = [
   "4",
 ];
 
-const options = useLocalStorage("options", baseOptions);
+const options = useLocalStorage("options", [...baseOptions]);
 const spinner = ref<HTMLElement | null>(null);
 const spinning = ref(false);
 const spinningAngle = ref(0);
@@ -96,7 +96,7 @@ function rimuovi() {
   options.value.shift();
 }
 function reset() {
-  options.value = baseOptions;
+  options.value = [...baseOptions];
 }
 
 const outerDiameter = 100;
