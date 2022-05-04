@@ -4,6 +4,11 @@ import { ref } from "vue";
 import { computed } from "@vue/reactivity";
 import { useLocalStorage } from "@vueuse/core";
 
+interface Opzione {
+  title: string;
+  description: string;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const dialog = ref<any>(null);
 
@@ -15,24 +20,42 @@ function setIsOpen(value: boolean) {
   }
 }
 
-const baseOptions = [
-  "flessioni",
-  "biscotti",
-  "colonscopia",
-  "altre cose divertenti",
-  "ma molto divertenti",
-  "fai le puzze",
-  "1",
-  "2",
-  "3",
-  "4",
+const baseOptions: Array<Opzione> = [
+  {
+    title: "flessioni",
+    description: "flessioni => Lorem ipsum dolo sit amet.",
+  },
+  { title: "biscotti", description: "biscotti => Lorem ipsum dolo sit amet." },
+  {
+    title: "colonscopia",
+    description: "colonscopia => Lorem ipsum dolo sit amet.",
+  },
+  {
+    title: "altre cose divertenti",
+    description: "altre cose divertenti => Lorem ipsum dolo sit amet.",
+  },
+  {
+    title: "ma molto divertenti",
+    description: "ma molto divertenti => Lorem ipsum dolo sit amet.",
+  },
+  {
+    title: "fai le puzze",
+    description: "fai le puzze => Lorem ipsum dolo sit amet.",
+  },
+  { title: "1", description: "1 => Lorem ipsum dolo sit amet." },
+  { title: "2", description: "2 => Lorem ipsum dolo sit amet." },
+  { title: "3", description: "3 => Lorem ipsum dolo sit amet." },
+  { title: "4", description: "4 => Lorem ipsum dolo sit amet." },
 ];
 
-const options = useLocalStorage("options", [...baseOptions]);
+const options = useLocalStorage<Array<Opzione>>(
+  "options",
+  JSON.parse(JSON.stringify(baseOptions))
+);
 const spinner = ref<HTMLElement | null>(null);
 const spinning = ref(false);
 const spinningAngle = ref(0);
-const currentlyOn = ref("");
+const currentlyOn = ref({ title: "", description: "" });
 
 function generateLightColorHex() {
   let color = "#";
@@ -91,18 +114,21 @@ function spinWheel() {
 
   setTimeout(() => {
     setIsOpen(true);
-    currentlyOn.value = selected?.title || "";
+    currentlyOn.value.title = selected?.title || "";
+    currentlyOn.value.description = selected?.description || "";
     spinning.value = false;
   }, 5000);
 }
 
 function rimuovi() {
-  options.value = options.value.filter((option) => option != currentlyOn.value);
-  currentlyOn.value = "";
+  options.value = options.value.filter(
+    ({ title }) => title != currentlyOn.value.title
+  );
+  currentlyOn.value = { title: "", description: "" };
   setIsOpen(false);
 }
 function reset() {
-  options.value = [...baseOptions];
+  options.value = JSON.parse(JSON.stringify(baseOptions));
 }
 
 const outerDiameter = 100;
@@ -114,7 +140,8 @@ const wheelSlices = computed(() => {
 
   return options.value.map((option, index) => {
     return {
-      title: option,
+      title: option.title,
+      description: option.description,
       start: index * sliceAngle - offset,
       end: (index + 1) * sliceAngle - offset,
       color: generateLightColorHex(),
@@ -224,9 +251,9 @@ const wheelSlices = computed(() => {
           class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl my-8 max-w-sm w-full p-6"
         >
           <h3 class="text-lg leading-6 font-medium text-gray-900">
-            {{ currentlyOn }}
+            {{ currentlyOn.title }}
           </h3>
-          <p class="text-sm text-gray-500">Qui la cosa va male.</p>
+          <p class="text-sm text-gray-500">{{ currentlyOn.description }}</p>
 
           <div class="mt-5 sm:mt-6 flex flex-col gap-3">
             <button
