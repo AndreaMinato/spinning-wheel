@@ -45,8 +45,8 @@ const baseOptions: Array<Opzione> = [
     description: "Cantaci una delle te canzoni preferite!",
   },
   {
-    title: "Che fatica!",
-    description: "Allenati per il matrimonio, ricorda la tua infanzia con qualche esercizio di ginnastica artistica",
+    title: "Allenati per il matrimonio",
+    description: "Ricorda la tua infanzia con qualche esercizio di ginnastica artistica",
   },
   {
     title: "Infermieraa!",
